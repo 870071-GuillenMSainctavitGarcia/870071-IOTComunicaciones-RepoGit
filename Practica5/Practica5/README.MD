@@ -1,0 +1,115 @@
+# Práctica 5: Captura y Transmisión de Datos de Aceleración en Arduino Nano 33 BLE
+
+Este directorio contiene el código fuente C++ (*firmware*) cargado en el microcontrolador **Arduino Nano 33 BLE**. El objetivo principal es inicializar el sensor inercial integrado (IMU), muestrear los tres ejes de aceleración ($A_x, A_y, A_z$) a intervalos regulares y transmitir las lecturas formateadas a través de la interfaz UART (USB Serie) hacia un PC.
+
+---
+
+## Especificaciones del Sistema
+
+* **Placa:** Arduino Nano 33 BLE / Nano 33 BLE Sense
+* **Sensor Inercial (IMU):** LSM9DS1 *(o BMI270 en la revisión Rev2)*
+* **Interfaz de Comunicación Sensor-MCU:** I2C
+* **Interfaz de Comunicación MCU-PC:** UART (USB Serie)
+* **Tasa de Transmisión (Baud Rate):** `115200 bps` *(o 9600 bps)*
+* **Período de Muestreo:** `50 ms` (Frecuencia: $20\text{ Hz}$)
+* **Formato de Salida:** Cadena CSV delimitada por punto y coma con salto de línea (`Ax;Ay;Az\n`)
+
+---
+
+##  Requisitos del Entorno
+
+### Hardware
+
+* Placa Arduino Nano 33 BLE.
+* Cable Micro-USB con líneas de datos habilitadas.
+
+### Software y Librerías
+
+* [Arduino IDE](https://www.arduino.cc/en/software) (v2.0 o superior recomendada).
+* Pacote de tarjetas: **Arduino Mbed OS Nano Boards**.
+* Librería oficial del sensor (según revisión del hardware):
+* **Rev1:** `Arduino_LSM9DS1`
+* **Rev2:** `Arduino_BMI270_BMM150`
+
+
+
+---
+
+## Estructura del Archivo `.ino`
+
+El programa ejecuta las siguientes funciones clave:
+
+```cpp
+#include <Arduino_LSM9DS1.h> // Sustituir por <Arduino_BMI270_BMM150.h> si es la versión Rev2
+
+void setup() {
+  // Inicialización del puerto serie USB
+  Serial.begin(115200);
+  delay(1000); 
+
+  // Inicialización y verificación de la IMU integrada (I2C)
+  if (!IMU.begin()) {
+    while (1); // Bloqueo de seguridad si la IMU falla
+  }
+}
+
+void loop() {
+  float x, y, z;
+
+  // Lectura del acelerómetro en unidades 'g'
+  if (IMU.accelerationAvailable()) {
+    IMU.readAcceleration(x, y, z);
+
+    // Formateo de datos CSV: Ax;Ay;Az
+    Serial.print(x, 4);
+    Serial.print(";");
+    Serial.print(y, 4);
+    Serial.print(";");
+    Serial.println(z, 4);
+  }
+
+  // Control del tiempo de muestreo (50 ms = 20 Hz)
+  delay(50);
+}
+
+```
+
+---
+
+## Instrucciones de Instalación y Carga
+
+1. **Instalación del Kernel de la Tarjeta:**
+* Abre Arduino IDE y dirígete a `Herramientas > Placa > Gestor de tarjetas`.
+* Busca **Arduino Mbed OS Nano Boards** e instálalo.
+
+
+2. **Instalación de la Librería del Sensor:**
+* Ve a `Herramientas > Administrar bibliotecas...`
+* Busca `Arduino_LSM9DS1` e instálala.
+
+
+3. **Compilación y Carga:**
+* Conecta el Arduino Nano 33 BLE al equipo mediante USB.
+* En `Herramientas > Placa`, selecciona **Arduino Nano 33 BLE**.
+* En `Herramientas > Puerto`, selecciona el puerto COM asignado a la tarjeta.
+* Haz clic en el botón **Subir** (flecha a la derecha).
+
+
+
+---
+
+## Verificación y Pruebas
+
+Para comprobar el correcto funcionamiento sin usar Python:
+
+1. Abre el **Monitor Serie** de Arduino IDE (`Ctrl + Mayús + M`) o una herramienta externa como **TERMITE**.
+2. Selecciona la velocidad de **115200 baudios** *(o la configurada en `Serial.begin`)*.
+3. Verifica que recibes una trama de datos continua similar a esta:
+
+```text
+0.0120;-0.9850;0.1240
+0.0150;-0.9840;0.1220
+-0.0020;-0.9900;0.1300
+
+```
+

@@ -112,5 +112,3 @@ Para comprobar el correcto funcionamiento sin usar Python:
 -0.0020;-0.9900;0.1300
 
 ```
-
-> **Importante:** Recuerda cerrar el Monitor Serie o TERMITE antes de ejecutar los scripts de Python de los Apartados 3 y 4, ya que solo un proceso puede acceder al puerto COM simultáneamente.
