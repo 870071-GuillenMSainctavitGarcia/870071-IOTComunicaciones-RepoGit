@@ -4,14 +4,14 @@ Este directorio contiene el código fuente C++ (*firmware*) cargado en el microc
 
 ---
 
-## 📋 Especificaciones del Sistema
+##  Especificaciones del Sistema
 
 * **Placa:** Arduino Nano 33 BLE / Nano 33 BLE Sense
 * **Sensor Inercial (IMU):** LSM9DS1 *(o BMI270 en la revisión Rev2)*
 * **Interfaz de Comunicación Sensor-MCU:** I2C
 * **Interfaz de Comunicación MCU-PC:** UART (USB Serie)
 * **Tasa de Transmisión (Baud Rate):** `115200 bps` *(o 9600 bps)*
-* **Período de Muestreo:** `50 ms` (Frecuencia: $20\text{ Hz}$)
+* **Período de Muestreo:** `50 ms` (Frecuencia: 20Hz)
 * **Formato de Salida:** Cadena CSV delimitada por punto y coma con salto de línea (`Ax;Ay;Az\n`)
 
 ---
